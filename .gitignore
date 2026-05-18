@@ -1,0 +1,61 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv/
+venv/
+env/
+
+# Model checkpoints (too large for GitHub)
+outputs/checkpoints/
+*.bin
+*.safetensors
+*.pt
+*.pth
+
+# Raw data (not redistributed; download per README instructions)
+data/raw/
+data/processed/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+runs/
+wandb/
+
+# Debug / internal scripts
+scripts/_import_test.py
+scripts/_run_prompt.py
+test_import.py
+run_train.py
+
+# Claude internal
+.claude/
+
+# Report build artifacts (regenerate with pdflatex)
+report/mid_report/*.pdf
+report/mid_report/*.zip
+report/learning_guide.html
+report/index.html
+mid_report.md
+
+# Course PDF
+AI600-DeepLearning2502-SemesterProjects.pdf
+
+# ICML style files (download from https://icml.cc/Conferences/2025/StyleAuthorInstructions)
+report/mid_report/icml2025.sty
+report/mid_report/icml2025.bst
+report/mid_report/algorithm.sty
+report/mid_report/algorithmic.sty
+report/mid_report/fancyhdr.sty

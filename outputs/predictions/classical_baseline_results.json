@@ -1,0 +1,34 @@
+[
+  {
+    "model": "TF-IDF + Logistic Regression (balanced)",
+    "f1_hate": 0.8539325842696629,
+    "f1_non_hate": 0.8169014084507042,
+    "f1_macro": 0.8354169963601836,
+    "fpr": 0.22043010752688172,
+    "accuracy": 0.8375
+  },
+  {
+    "model": "TF-IDF + Random Forest (balanced)",
+    "f1_hate": 0.851063829787234,
+    "f1_non_hate": 0.7878787878787878,
+    "f1_macro": 0.819471308833011,
+    "fpr": 0.3010752688172043,
+    "accuracy": 0.825
+  },
+  {
+    "model": "TF-IDF + Fuzzy + LR (Ullah et al. 2024)",
+    "f1_hate": 0.8574660633484162,
+    "f1_non_hate": 0.8240223463687151,
+    "f1_macro": 0.8407442048585656,
+    "fpr": 0.20698924731182797,
+    "accuracy": 0.8425
+  },
+  {
+    "model": "TF-IDF + Fuzzy + RF (Ullah et al. 2024)",
+    "f1_hate": 0.8373101952277657,
+    "f1_non_hate": 0.7787610619469026,
+    "f1_macro": 0.8080356285873342,
+    "fpr": 0.2903225806451613,
+    "accuracy": 0.8125
+  }
+]

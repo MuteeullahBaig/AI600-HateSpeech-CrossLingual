@@ -1,0 +1,49 @@
+{
+  "experiment": "few_shot_balanced_weights",
+  "class_weights": [
+    1.0,
+    1.0
+  ],
+  "num_epochs": 5,
+  "results": [
+    {
+      "k": 0,
+      "f1_hate": 0.005,
+      "f1_macro": 0.319,
+      "fpr": 0.003,
+      "note": "zero-shot (previous)"
+    },
+    {
+      "k": 8,
+      "f1_hate": 0.697,
+      "f1_hate_std": 0.0,
+      "f1_macro": 0.35,
+      "fpr": 0.998,
+      "note": "collapses to all-hate"
+    },
+    {
+      "k": 16,
+      "f1_hate": 0.697,
+      "f1_hate_std": 0.0,
+      "f1_macro": 0.351,
+      "fpr": 0.997,
+      "note": "collapses to all-hate"
+    },
+    {
+      "k": 32,
+      "f1_hate": 0.697,
+      "f1_hate_std": 0.0,
+      "f1_macro": 0.349,
+      "fpr": 1.0,
+      "note": "collapses to all-hate"
+    },
+    {
+      "k": 64,
+      "f1_hate": 0.715,
+      "f1_hate_std": 0.009,
+      "f1_macro": 0.528,
+      "fpr": 0.777,
+      "note": "partial learning"
+    }
+  ]
+}

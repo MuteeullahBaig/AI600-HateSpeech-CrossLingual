@@ -1,0 +1,35 @@
+# XLM-RoBERTa-large — primary best-performance config
+# Environment: mmseg_gpu (PyTorch 2.11+cu126, CUDA 12.6)
+# RTX 4070 Laptop GPU (8 GB VRAM): batch=8 + grad_accum=4 = effective batch 32
+# If OOM: reduce per_device_train_batch_size to 4, gradient_accumulation_steps to 8
+
+model_name: xlm-roberta-large
+max_length: 128
+
+# Training
+per_device_train_batch_size: 8
+per_device_eval_batch_size: 16
+gradient_accumulation_steps: 4
+learning_rate: 1.0e-5
+num_train_epochs: 5
+warmup_ratio: 0.1
+weight_decay: 0.01
+
+# Memory
+fp16: true
+gradient_checkpointing: true
+
+# Class weighting (hate=1, non-hate=0; hate is underrepresented)
+class_weights: [1.0, 8.0]   # EN train is 94% non-hate / 6% hate → strong upweighting needed
+
+# Saving / evaluation
+evaluation_strategy: epoch
+save_strategy: epoch
+load_best_model_at_end: true
+metric_for_best_model: f1_hate
+greater_is_better: true
+save_total_limit: 2
+report_to: none
+
+# Reproducibility
+seed: 42

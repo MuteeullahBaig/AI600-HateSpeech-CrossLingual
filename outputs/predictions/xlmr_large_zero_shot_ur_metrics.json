@@ -1,0 +1,13 @@
+{
+  "f1_hate": 0.004651162790697674,
+  "f1_non_hate": 0.6341880341880342,
+  "f1_macro": 0.3194195984893659,
+  "f1_weighted": 0.29738580799045916,
+  "accuracy": 0.465,
+  "precision_hate": 0.5,
+  "recall_hate": 0.002336448598130841,
+  "fpr": 0.002688172043010753,
+  "checkpoint": "outputs\\checkpoints\\xlmr_large_en\\best_model",
+  "test_file": "data/raw/hateval2019_ur_dev.tsv",
+  "lang": "ur"
+}
