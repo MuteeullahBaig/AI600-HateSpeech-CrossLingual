@@ -18,12 +18,12 @@
   }
 
   .cover {
-    background: linear-gradient(135deg, #1E2761 0%, #2d3a8c 100%);
+    background: linear-gradient(135deg, #065A82 0%, #0D9488 100%);
     color: white; border-radius: 14px; padding: 2rem 2rem; margin-bottom: 1.8rem;
   }
   .cover h1 { color: white; font-size: 1.7rem; font-weight: 800; }
-  .cover .sub { color: #FDE68A; font-size: .95rem; margin-top: .3rem; }
-  .cover .meta { margin-top: 1rem; font-size: .85rem; color: #C4A252; }
+  .cover .sub { color: #99F6E4; font-size: .95rem; margin-top: .3rem; }
+  .cover .meta { margin-top: 1rem; font-size: .85rem; color: #A5F3FC; }
 
   .slide-block {
     background: white; border-radius: 12px; padding: 0;
@@ -31,12 +31,12 @@
     overflow: hidden;
   }
   .slide-header {
-    background: #1E2761; color: white;
+    background: #065A82; color: white;
     padding: .9rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
   }
   .slide-name { font-size: 1.05rem; font-weight: 700; }
   .slide-time {
-    background: #F5A623; color: #1E2761;
+    background: #0D9488; color: white;
     font-size: .8rem; font-weight: 700; padding: .2rem .7rem;
     border-radius: 20px; white-space: nowrap;
   }
@@ -57,12 +57,12 @@
     line-height: 1.85;
     color: #212529;
     padding: .4rem 0;
-    border-left: 3px solid #F5A623;
+    border-left: 3px solid #0D9488;
     padding-left: .95rem;
     margin-bottom: .6rem;
   }
   .script em {
-    color: #1E2761;
+    color: #065A82;
     font-style: normal;
     font-weight: 600;
   }
@@ -75,8 +75,8 @@
   }
 
   .transition {
-    background: #FEF3C7; border-left: 3px solid #F5A623;
-    padding: .5rem .9rem; font-size: 13px; color: #92400E;
+    background: #E0F2FE; border-left: 3px solid #0D9488;
+    padding: .5rem .9rem; font-size: 13px; color: #065A82;
     font-weight: 600; border-radius: 0 6px 6px 0; margin-top: .8rem;
   }
 
@@ -92,7 +92,20 @@
     margin-bottom: 1.5rem; font-size: .88rem; color: #475569;
     display: flex; gap: 2rem; flex-wrap: wrap;
   }
-  .timing-bar span { font-weight: 700; color: #1E2761; }
+  .timing-bar span { font-weight: 700; color: #065A82; }
+
+  /* slide thumbnail map */
+  .slide-map {
+    background: white; border-radius: 10px; padding: 1rem 1.4rem;
+    margin-bottom: 1.8rem; box-shadow: 0 1px 6px rgba(0,0,0,.07);
+  }
+  .slide-map h3 { font-size: .9rem; font-weight: 700; color: #065A82; margin-bottom: .7rem; text-transform: uppercase; letter-spacing: .05em; }
+  .slide-map table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  .slide-map th { background: #065A82; color: white; padding: .4rem .7rem; text-align: left; }
+  .slide-map td { padding: .35rem .7rem; border-bottom: 1px solid #f0f0f0; }
+  .slide-map tr:nth-child(even) td { background: #f8fafc; }
+  .slide-map .presenter-a { color: #0D9488; font-weight: 700; }
+  .slide-map .presenter-b { color: #065A82; font-weight: 700; }
 
   hr { border: none; border-top: 2px dashed #dee2e6; margin: 1.5rem 0; }
 
@@ -112,16 +125,29 @@
   <div class="meta">
     AI-600 Deep Learning &nbsp;·&nbsp; LUMS Spring 2026 &nbsp;·&nbsp;
     Muteeullah Baig &amp; Rana Muhammad Hamza<br>
-    <strong style="color:#FDE68A">Word-for-word speaking guide · Print and hold during presentation</strong>
+    <strong style="color:#99F6E4">Word-for-word speaking guide &nbsp;·&nbsp; matches Presentation v4 (6 slides)</strong>
   </div>
 </div>
 
 <div class="timing-bar">
-  <div>Total time: <span>10 minutes</span></div>
+  <div>Total time: <span>~10 minutes</span></div>
   <div>Slides: <span>1 title + 5 content</span></div>
   <div>Q&amp;A: <span>10 minutes after</span></div>
   <div>Presenter A: <span>Slides 1–3</span></div>
   <div>Presenter B: <span>Slides 4–6</span></div>
+</div>
+
+<div class="slide-map">
+  <h3>Slide Map (v4)</h3>
+  <table>
+    <tr><th>Slide</th><th>Title</th><th>Presenter</th><th>Time</th></tr>
+    <tr><td>1</td><td>Title</td><td class="presenter-a">A</td><td>~30s</td></tr>
+    <tr><td>2</td><td>Problem Statement (Why Nastaliq Urdu · Study Overview · 4 RQs)</td><td class="presenter-a">A</td><td>~1.5 min</td></tr>
+    <tr><td>3</td><td>Dataset Description (Davidson EN vs ISE-Hate side-by-side)</td><td class="presenter-a">A</td><td>~1.5 min</td></tr>
+    <tr><td>4</td><td>Methodology (model cards + 4 transfer protocols)</td><td class="presenter-b">B</td><td>~2 min</td></tr>
+    <tr><td>5</td><td>Results &amp; Comparison (table + callout stats)</td><td class="presenter-b">B</td><td>~2.5 min</td></tr>
+    <tr><td>6</td><td>Key Findings (5 findings incl. fairness + GitHub)</td><td class="presenter-b">B</td><td>~2 min</td></tr>
+  </table>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -151,8 +177,8 @@
     <div class="cue cue-say">Say</div>
     <div class="script">
       The Urdu we target is written in <em>Nastaliq script</em> — the standard
-      Arabic-script writing system used in Pakistan — and we used the ISE-Hate corpus
-      of 21,759 annotated Pakistani tweets.
+      Arabic-script writing system used in Pakistan — not Roman Urdu.
+      That distinction turns out to matter significantly, and we will come back to it.
     </div>
 
     <div class="transition">Move to Slide 2</div>
@@ -160,21 +186,32 @@
 </div>
 
 <!-- ═══════════════════════════════════════════
-     SLIDE 2 — PROBLEM STATEMENT & DATASET
+     SLIDE 2 — PROBLEM STATEMENT
 ═══════════════════════════════════════════ -->
 <div class="slide-block">
   <div class="slide-header">
-    <div class="slide-name">Slide 2 &nbsp;·&nbsp; Problem Statement &amp; Dataset &nbsp;·&nbsp; Presenter A</div>
-    <div class="slide-time">~2 minutes</div>
+    <div class="slide-name">Slide 2 &nbsp;·&nbsp; Problem Statement &nbsp;·&nbsp; Presenter A</div>
+    <div class="slide-time">~1.5 minutes</div>
   </div>
   <div class="slide-body">
 
-    <div class="cue cue-say">Say — Why this is hard</div>
+    <div class="cue cue-say">Say — top-left box: Why Nastaliq Urdu?</div>
     <div class="script">
-      Hate speech detection tools are almost entirely built for English.
-      Urdu, spoken by over 230 million people, is severely under-resourced for this task.
-      Our goal is to understand <em>how much</em> an English-trained model can help —
-      and where it fails — when applied to Pakistani Urdu hate speech.
+      Urdu is spoken by 230 million people and is the dominant informal language
+      on Pakistani social media, yet hate speech detection tools are almost
+      entirely built for English. We use the <em>ISE-Hate corpus</em> —
+      21,759 annotated Nastaliq Urdu tweets from Akram et al. 2023 —
+      the first large-scale hate detection dataset for this language.
+      Crucially, Nastaliq Urdu is already in XLM-R's 100-language pre-training.
+      Roman Urdu — written in Latin letters — is not. So our choice of script
+      directly affects whether the model has any representations to start from.
+    </div>
+
+    <div class="cue cue-say">Say — top-right box: Study Overview</div>
+    <div class="script">
+      In brief: we fine-tune multilingual transformers on English hate speech data,
+      evaluate how well they transfer to Nastaliq Urdu under zero-shot and few-shot conditions,
+      and compare those results against classical machine learning baselines.
     </div>
 
     <div class="cue cue-say">Say — Research Questions</div>
@@ -184,108 +221,148 @@
 
     <div class="cue cue-point">Point to RQ1</div>
     <div class="script">
-      <em>RQ1</em>: Does model size matter? We tested mBERT, XLM-R-base, and XLM-R-large
-      — models of increasing size. Spoiler: yes, bigger is better, even for Urdu.
+      <em>RQ1</em>: Does model capacity matter? We test mBERT at 179 million parameters,
+      XLM-R-base at 278 million, and XLM-R-large at 560 million.
+      Spoiler: bigger is better, even for zero-shot Urdu.
     </div>
 
     <div class="cue cue-point">Point to RQ2</div>
     <div class="script">
-      <em>RQ2</em>: Can an English-trained model detect Urdu hate speech with
-      <em>zero</em> Urdu examples? This is zero-shot transfer.
-      Short answer: it fails — but in an interesting and informative way.
+      <em>RQ2</em>: Is zero-shot failure caused by the English training data
+      being class-imbalanced — 94.8% non-hate — or by genuine domain incompatibility?
+      The answer tells us whether we have a calibration problem or a transfer problem.
     </div>
 
     <div class="cue cue-point">Point to RQ3</div>
     <div class="script">
-      <em>RQ3</em>: If we give the model 8, 16, 32, or 64 labelled Urdu tweets,
-      does it improve? Unlike some transfer settings, here it does —
-      steadily and stably.
+      <em>RQ3</em>: Do K-shot examples from Urdu enable stable, useful transfer?
+      On some tasks, few-shot fine-tuning collapses. We wanted to know if Nastaliq Urdu
+      is one of those cases.
     </div>
 
     <div class="cue cue-point">Point to RQ4</div>
     <div class="script">
       And <em>RQ4</em>: Does the model treat all types of hate speech fairly?
-      We used ISE-Hate's Level-2 sub-categories — Interfaith, Sectarian, Ethnic, Other —
-      to measure whether the model is systematically blind to any group.
+      ISE-Hate has four Level-2 sub-categories — Interfaith, Sectarian, Ethnic, Other —
+      and we measure whether the model's blind spots fall on specific groups.
     </div>
-
-    <div class="cue cue-say">Say — Dataset</div>
-    <div class="script">
-      Our source data is the Davidson et al. 2017 English dataset:
-      about <em>21,000 training samples</em>, but only <em>5.2% are hate speech</em>.
-      Our target is ISE-Hate: 15,231 Urdu training tweets, with <em>39.8% hate</em>.
-      This mismatch — 5% hate in English versus 40% in Urdu —
-      is the root cause of zero-shot failure, as I will explain shortly.
-    </div>
-
-    <div class="tip">If asked "why not just translate Urdu to English?": Translation is lossy for hate speech — culturally specific slurs, sectarian terminology, and idiomatic insults either don't translate or translate incorrectly. Our approach works directly on the raw Urdu text.</div>
 
     <div class="transition">Move to Slide 3</div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════
-     SLIDE 3 — METHODOLOGY
+     SLIDE 3 — DATASET DESCRIPTION
 ═══════════════════════════════════════════ -->
 <div class="slide-block">
   <div class="slide-header">
-    <div class="slide-name">Slide 3 &nbsp;·&nbsp; Methodology &nbsp;·&nbsp; Presenter A</div>
-    <div class="slide-time">~2 minutes</div>
+    <div class="slide-name">Slide 3 &nbsp;·&nbsp; Dataset Description &nbsp;·&nbsp; Presenter A</div>
+    <div class="slide-time">~1.5 minutes</div>
   </div>
   <div class="slide-body">
 
-    <div class="cue cue-say">Say — Models</div>
+    <div class="cue cue-say">Say — SOURCE column</div>
     <div class="script">
-      We tested three multilingual transformer models, all pre-trained on text
-      from 100 languages including Urdu.
-      <em>mBERT</em> is our smallest baseline at 179 million parameters.
-      <em>XLM-R-base</em> for ablation at 278 million.
-      And our primary model is <em>XLM-R-large</em> at 560 million parameters,
-      trained by Meta on 2.5 terabytes of web text.
-      Importantly, Nastaliq Urdu is in XLM-R's vocabulary —
-      so the model already understands the script before we fine-tune it.
+      Our source language dataset is from Davidson et al. 2017.
+      It contains about <em>24,000 English tweets</em> —
+      we split into 19,826 train, 2,477 dev, and 2,477 test.
+      Only <em>5.2% are labelled hate speech</em> — the rest are offensive or neither.
+      This severe class imbalance has consequences we will discuss in a moment.
     </div>
 
-    <div class="cue cue-say">Say — English training</div>
+    <div class="cue cue-say">Say — TARGET column</div>
     <div class="script">
-      Phase one: we fine-tune all three models on the English dataset.
-      With only 5.2% hate samples, we use <em>class-weighted loss</em>
-      to prevent the model from ignoring hate speech entirely —
-      missing a hate sample costs 8 times more than missing a non-hate sample.
+      Our target dataset is ISE-Hate by Akram et al. 2023 — 21,759 Nastaliq Urdu tweets
+      collected from Twitter, annotated by native speakers.
+      We use 15,231 for training, 2,176 for development, and <em>4,352 for the final test set</em>.
+      Hate speech is <em>39.8% of the data</em> — far more balanced than English.
+      Inter-annotator agreement is Cohen's κ equals 0.71 — that is substantial agreement,
+      indicating the labels are reliable.
+      The dataset also provides Level-2 sub-category labels:
+      Interfaith, Sectarian, Ethnic, and Other.
     </div>
 
-    <div class="cue cue-point">Point to Transfer Protocols</div>
-    <div class="cue cue-say">Say — Transfer protocols</div>
+    <div class="cue cue-point">Point to the amber key challenge callout at the bottom</div>
     <div class="script">
-      We then apply three transfer protocols.
-      <em>Zero-shot</em>: apply the English model directly to Urdu tweets — no Urdu training.
-      <em>Few-shot</em>: give the model K labelled Urdu examples — 8, 16, 32, or 64 —
-      and continue fine-tuning with class weights calibrated for Urdu's 40% hate rate.
-      We run each K with three random seeds to measure stability.
-      And the <em>supervised upper bound</em>: train on all 15,231 Urdu examples
-      to see what is achievable with full supervision.
+      Here is the critical mismatch. The English model learns that
+      <em>94.8% of tweets are non-hate</em> — it develops a very strong prior
+      toward predicting non-hate. When we apply that model to Urdu,
+      where 39.8% of tweets actually are hate, the model is badly miscalibrated
+      before it sees a single Urdu word. This is the root cause of zero-shot failure —
+      a calibration problem, not a language coverage problem.
     </div>
 
-    <div class="cue cue-say">Say — Classical ML</div>
-    <div class="script">
-      We also run classical machine learning baselines:
-      TF-IDF features combined with Logistic Regression or Random Forest,
-      with and without FuzzyWuzzy string-matching features.
-      These are trained on the full Urdu training set and serve as a practical benchmark.
-    </div>
-
-    <div class="tip">If asked about gradient checkpointing: it is a memory-saving technique — recomputing activations during backpropagation instead of storing them, trading 30% speed for 30% less GPU memory. Required for XLM-R-large on our 12 GB GPU.</div>
+    <div class="tip">If asked why not use a balanced English dataset: Davidson 2017 is the canonical benchmark, used by most cross-lingual comparison papers. Using it keeps our results comparable to the literature. The imbalance is the research challenge, not an error in our design.</div>
 
     <div class="transition">Move to Slide 4 — Presenter B takes over</div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════
-     SLIDE 4 — RESULTS
+     SLIDE 4 — METHODOLOGY
 ═══════════════════════════════════════════ -->
 <div class="slide-block">
   <div class="slide-header">
-    <div class="slide-name">Slide 4 &nbsp;·&nbsp; Results &nbsp;·&nbsp; Presenter B</div>
+    <div class="slide-name">Slide 4 &nbsp;·&nbsp; Methodology &nbsp;·&nbsp; Presenter B</div>
+    <div class="slide-time">~2 minutes</div>
+  </div>
+  <div class="slide-body">
+
+    <div class="cue cue-say">Say — model cards</div>
+    <div class="script">
+      We tested three multilingual transformer models. All are pre-trained on text from 100 languages,
+      all include Nastaliq Urdu in their vocabulary.
+      <em>mBERT</em> — 179 million parameters — serves as our baseline.
+      <em>XLM-R-base</em> — 278 million — for ablations.
+      And our primary model is <em>XLM-R-large</em> — 560 million parameters —
+      pre-trained by Meta on 2.5 terabytes of web text with temperature-based language sampling
+      that gives Urdu stronger representations.
+    </div>
+
+    <div class="cue cue-point">Point to protocol 1: Zero-Shot</div>
+    <div class="script">
+      <em>Protocol 1 — Zero-shot</em>: we fine-tune on English only, then run the checkpoint
+      directly on the Urdu test set with no Urdu training at all.
+      As we just explained, the model is miscalibrated from the English imbalance —
+      so recall drops to 0.080 while precision stays at 0.885.
+      It rarely fires. The failure is low recall, not low precision.
+    </div>
+
+    <div class="cue cue-point">Point to protocol 2: Few-Shot</div>
+    <div class="script">
+      <em>Protocol 2 — Few-shot</em>: we take K stratified Urdu examples — K of 8, 16, 32, or 64 —
+      and continue fine-tuning from the English checkpoint.
+      We calibrate the class weights to [1.0, 2.5] for the Urdu 40% hate rate —
+      not the [1.0, 8.0] we used in English, which would massively over-weight hate.
+    </div>
+
+    <div class="cue cue-point">Point to protocol 3: Classical ML</div>
+    <div class="script">
+      <em>Protocol 3 — Classical ML</em>: unigram and bigram TF-IDF features
+      with 50,000-feature vocabulary, combined with Logistic Regression or Random Forest.
+      We also tested FuzzyWuzzy string-matching features against a hate-phrase lexicon.
+      These train on the <em>full 15,231 Urdu training samples</em>.
+    </div>
+
+    <div class="cue cue-point">Point to protocol 4: Supervised</div>
+    <div class="script">
+      <em>Protocol 4 — Supervised fine-tuning</em>: XLM-R-large fine-tuned on all 15,231 Urdu examples,
+      starting from the English checkpoint. This is our upper bound —
+      how good can we get if we have full Urdu supervision?
+    </div>
+
+    <div class="tip">If asked about gradient checkpointing: trading 30% compute for ~30% GPU memory savings — required to fit XLM-R-large on our 12 GB RTX 4070. Without it, the 560M parameter model would OOM at batch size 8.</div>
+
+    <div class="transition">Move to Slide 5</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 5 — RESULTS & COMPARISON
+═══════════════════════════════════════════ -->
+<div class="slide-block">
+  <div class="slide-header">
+    <div class="slide-name">Slide 5 &nbsp;·&nbsp; Results &amp; Comparison &nbsp;·&nbsp; Presenter B</div>
     <div class="slide-time">~2.5 minutes</div>
   </div>
   <div class="slide-body">
@@ -293,109 +370,56 @@
     <div class="cue cue-say">Say — introduce metrics</div>
     <div class="script">
       Our primary metrics are <em>Hate F1</em> — how well we catch hate speech —
-      <em>Macro F1</em> — the average F1 across both classes, which penalises
-      ignoring either — and <em>FPR</em>, the false positive rate:
-      how often safe content is wrongly flagged as hate.
+      <em>Macro F1</em> — the average across both classes, which penalises ignoring either —
+      and <em>FPR</em>, the false positive rate: how often safe content is wrongly flagged as hate.
+      All results are on the ISE-Hate test set of 4,352 Nastaliq Urdu tweets.
     </div>
 
-    <div class="cue cue-point">Point to English results table</div>
+    <div class="cue cue-point">Point to zero-shot row</div>
     <div class="script">
-      On English, the capacity hierarchy is clear: XLM-R-large achieves the best hate F1
-      of 0.509 and the lowest FPR of 0.030.
-      This ordering is important because it is <em>preserved</em> in zero-shot Urdu.
+      Zero-shot: hate F1 of <em>0.147</em>, macro F1 of 0.462.
+      The FPR is only 0.046 — the model almost never fires at all.
+      This is the class-imbalance prior at work. Precision is 0.885 —
+      nearly perfect — but recall is 0.080.
+      The model knows what English hate looks like; it just almost never sees those patterns in Urdu.
+      And notice: XLM-R-large is the <em>best</em> at zero-shot among the three backbones —
+      this is not negative transfer. Larger means better Urdu representations.
     </div>
 
-    <div class="cue cue-point">Point to zero-shot table</div>
+    <div class="cue cue-point">Point to few-shot rows (K=8 through K=64)</div>
     <div class="script">
-      Zero-shot transfer: all models fail — hate F1 below 0.15.
-      But notice something important: XLM-R-large is still the <em>best</em> at zero-shot,
-      at 0.147. This is not negative transfer.
-      The failure mode is <em>low recall</em>, not low precision:
-      precision is 0.885 — nearly perfect — but recall is 0.080.
-      The model almost never predicts hate.
-      It learned English hate patterns that simply don't appear in Urdu text,
-      so it almost never fires.
-    </div>
-
-    <div class="cue cue-point">Point to few-shot table</div>
-    <div class="script">
-      With few-shot adaptation, hate F1 rises monotonically:
-      0.590 at K equals 8, all the way to <em>0.694 at K equals 64</em>.
-      No collapse, no degenerate behaviour.
-      The K equals 16 variance is high — macro F1 drops to 0.544 —
-      because 16 examples are sometimes an unlucky batch.
-      By K equals 64, the model is completely stable: variance essentially zero.
-    </div>
-
-    <div class="cue cue-point">Point to classical ML and supervised rows</div>
-    <div class="script">
-      The classical TF-IDF plus Logistic Regression baseline,
-      trained on all 15,231 Urdu examples, achieves hate F1 of <em>0.747</em> —
-      outperforming our best few-shot result by 5 points.
-      Interestingly, FuzzyWuzzy adds <em>exactly zero</em> benefit —
-      its hate-phrase lexicon is in Latin script, and ISE-Hate is in Arabic script.
-      String matching across scripts produces pure noise.
-      The supervised XLM-R-large reaches <em>0.796</em> hate F1 and 0.816 macro F1,
-      but with a higher false positive rate of 0.228 versus 0.154 for TF-IDF.
-    </div>
-
-    <div class="tip">Key talking point: the 5.3 point gap between K=64 (0.694) and TF-IDF+LR (0.747) represents the cost of 64 labelled examples versus 15,231. This is the cross-lingual transfer gap quantified.</div>
-
-    <div class="transition">Move to Slide 5</div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     SLIDE 5 — FAIRNESS & DISCUSSION
-═══════════════════════════════════════════ -->
-<div class="slide-block">
-  <div class="slide-header">
-    <div class="slide-name">Slide 5 &nbsp;·&nbsp; Fairness &amp; Discussion &nbsp;·&nbsp; Presenter B</div>
-    <div class="slide-time">~2 minutes</div>
-  </div>
-  <div class="slide-body">
-
-    <div class="cue cue-say">Say — introduce fairness</div>
-    <div class="script">
-      Beyond overall metrics, we analysed how the model performs
-      across different <em>types</em> of hate speech using ISE-Hate's Level-2 sub-categories.
-    </div>
-
-    <div class="cue cue-point">Point to fairness table</div>
-    <div class="script">
-      At zero-shot, Interfaith hate speech recall is 28.2% —
-      but Other hate recall is just 1.4%.
-      That is a <em>twenty-times disparity</em>.
-      Interfaith hate speech sometimes uses terms the English-trained model recognises —
-      transliterated religious terms, internationally used slurs.
-      But the "Other" category — which is the largest, with 1,100 test samples —
-      is written in native Urdu idiom with no English surface form.
-      The model is essentially completely blind to it.
-    </div>
-
-    <div class="cue cue-say">Say — annotator bias</div>
-    <div class="script">
-      This disparity traces back to the English training data.
-      The Davidson dataset was annotated by Amazon Mechanical Turk workers —
-      predominantly white and US-based.
-      Research has shown they over-labelled African American dialect features as hate speech
-      and were more sensitive to religious language.
-      When transferred to Urdu, this bias means the model fires on content
-      that resembles English hate patterns
-      while missing culturally specific Pakistani hate in native Urdu.
-    </div>
-
-    <div class="cue cue-say">Say — few-shot improvement</div>
-    <div class="script">
-      The good news: at K equals 64, few-shot adaptation nearly equalises the structured categories.
-      Interfaith recall reaches 98.7%, Sectarian 94.8%, Ethnic 94.1%.
-      The "Other" category is the hardest — still only 71.2% recall —
-      because it is the most lexically diverse and idiomatic.
-      But the false positive rate jumps from 0.7% to 31.7% as we gain recall.
+      With just 8 Urdu examples, hate F1 jumps to <em>0.590</em>.
+      It rises monotonically: K equals 16 gives 0.619, K equals 32 gives 0.649,
+      K equals 64 gives <em>0.694</em>. No collapse at any K.
+      Note that the FPR also rises — from 0.046 to 0.205 — as the model learns to fire more.
       There is a fundamental trade-off between catching hate and over-flagging neutral content.
     </div>
 
-    <div class="tip">If asked about the FPR jump: as the model learns to detect interfaith and sectarian hate, it also flags interfaith and sectarian neutral content. A user discussing religion without hate intent faces a 31.7% chance of being flagged. This is a real deployment concern for Pakistani content moderation.</div>
+    <div class="cue cue-point">Point to TF-IDF+LR row</div>
+    <div class="script">
+      The classical baseline trained on all 15,231 Urdu examples achieves hate F1 of <em>0.747</em>,
+      outperforming our best few-shot result by 5.3 points.
+      Critically, FuzzyWuzzy adds exactly <em>zero</em> benefit — the hate-phrase lexicon
+      is in Latin script, ISE-Hate is in Arabic script. String matching across scripts
+      produces near-zero similarity scores for every tweet. Pure noise.
+      This is a script mismatch that would not occur with Roman Urdu.
+    </div>
+
+    <div class="cue cue-point">Point to supervised XLM-R-large row (highlighted)</div>
+    <div class="script">
+      The supervised upper bound: hate F1 of <em>0.796</em> and macro F1 of 0.816.
+      But the FPR is 0.228 — higher than TF-IDF+LR at 0.154.
+      The neural model gains 0.049 hate F1 but produces 48% more false positives.
+      The dominant signal in ISE-Hate is lexical.
+      For a use case where over-censoring is the bigger concern, TF-IDF is the better choice.
+    </div>
+
+    <div class="cue cue-point">Point to the three callout boxes at the bottom</div>
+    <div class="script">
+      The three callouts summarise our trajectory:
+      0.147 zero-shot — a failure. 0.747 TF-IDF — beats all few-shot neural methods.
+      0.796 supervised — our project best.
+    </div>
 
     <div class="transition">Move to Slide 6</div>
   </div>
@@ -406,8 +430,8 @@
 ═══════════════════════════════════════════ -->
 <div class="slide-block">
   <div class="slide-header">
-    <div class="slide-name">Slide 6 &nbsp;·&nbsp; Key Findings &amp; Conclusion &nbsp;·&nbsp; Presenter B</div>
-    <div class="slide-time">~1.5 minutes</div>
+    <div class="slide-name">Slide 6 &nbsp;·&nbsp; Key Findings &nbsp;·&nbsp; Presenter B</div>
+    <div class="slide-time">~2 minutes</div>
   </div>
   <div class="slide-body">
 
@@ -418,53 +442,60 @@
 
     <div class="cue cue-point">Point to Finding 1</div>
     <div class="script">
-      <em>First</em>: zero-shot transfer fails, but not due to language coverage.
-      Urdu is in XLM-R's pre-training — the failure is due to
-      class-imbalance bias from English training, causing near-zero recall.
-      The larger model is still the best — no negative transfer here.
+      <em>Finding 1</em>: zero-shot fails due to class-imbalance prior — not domain gap.
+      The English training data is 94.8% non-hate, so the model almost never predicts hate.
+      Recall equals 0.080, precision equals 0.885. It is a calibration failure.
+      And XLM-R-large is the <em>best</em> zero-shot model — no negative transfer.
     </div>
 
     <div class="cue cue-point">Point to Finding 2</div>
     <div class="script">
-      <em>Second</em>: choosing the correct target language prevents few-shot collapse.
-      Nastaliq Urdu, being in XLM-R's vocabulary, allows stable monotonic improvement
-      from 0.590 at K equals 8 to 0.694 at K equals 64.
+      <em>Finding 2</em>: few-shot transfer is stable and monotonically improving.
+      Hate F1 rises from 0.590 at K equals 8 to 0.694 at K equals 64.
+      No collapse on Nastaliq Urdu. Correct class weights are key —
+      [1.0, 2.5] for 40% hate, not [1.0, 8.0] from English.
     </div>
 
     <div class="cue cue-point">Point to Finding 3</div>
     <div class="script">
-      <em>Third</em>: there is a 20-times zero-shot recall disparity across hate sub-categories.
-      Annotator bias from the English source propagates cross-lingually,
-      systematically blinding the model to native-Urdu idiom hate speech.
+      <em>Finding 3</em>: classical ML beats all few-shot neural methods.
+      TF-IDF plus Logistic Regression on full data achieves hate F1 of 0.747.
+      FuzzyWuzzy adds zero benefit — Latin lexicon versus Arabic Nastaliq script
+      is a complete mismatch. Random Forest achieves the lowest false positive rate, 0.056.
     </div>
 
     <div class="cue cue-point">Point to Finding 4</div>
     <div class="script">
-      <em>Fourth</em>: TF-IDF plus Logistic Regression is a strong fully-supervised baseline
-      at hate F1 of 0.747, outperforming all few-shot neural methods.
-      FuzzyWuzzy adds nothing — script mismatch kills lexical matching.
+      <em>Finding 4</em>: the supervised XLM-R-large achieves strong performance at a high FPR cost.
+      Hate F1 of 0.796 — that is +0.049 over TF-IDF — but FPR rises from 0.154 to 0.228.
+      The dominant signal is lexical. 560 times more compute for a 4.9-point gain
+      may not be justified in a deployment setting.
     </div>
 
     <div class="cue cue-point">Point to Finding 5</div>
     <div class="script">
-      <em>Fifth</em>: supervised XLM-R-large achieves 0.796 hate F1,
-      modestly beating TF-IDF but with significantly higher false positives.
-      The dominant signal in ISE-Hate is lexical —
-      deep multilingual representations add modest value at real cost.
+      <em>Finding 5</em>: there is a <em>twenty-times zero-shot recall disparity</em> across hate sub-categories.
+      Interfaith hate recall is 28.2% — Other hate recall is just 1.4%.
+      The English annotators — Amazon Mechanical Turk workers, predominantly US-based —
+      were more sensitive to religious-adjacent language and international-facing slurs.
+      When transferred to Urdu, this bias means the model catches English-pattern hate
+      while being nearly blind to native-Urdu-idiom hate speech.
+      The "Other" category, the largest with 1,100 test samples, is written in
+      culturally specific Pakistani idiom with no English surface form — invisible to the model.
     </div>
 
     <div class="cue cue-say">Say — closing</div>
     <div class="script">
-      To summarise: cross-lingual hate speech transfer to Urdu is genuinely hard.
-      Zero-shot fails due to calibration, not language coverage.
-      Few-shot adaptation works stably with the correct class weights.
+      To summarise: cross-lingual hate speech transfer to Nastaliq Urdu is hard.
+      Zero-shot fails on calibration, not language coverage.
+      Few-shot adapts stably with the correct class weights.
       But annotator bias from English training creates systematic blind spots
-      that no amount of cross-lingual transfer can fully overcome
-      without native-language labelled data.
-      Thank you. We are happy to take your questions.
+      in low-resource groups that no amount of cross-lingual transfer can fully overcome
+      without native-language labelled data. Thank you —
+      we are happy to take your questions.
     </div>
 
-    <div class="tip">End with a confident pause. Do not say "that's all" or "I think that's it" — end on "Thank you, we are happy to take your questions."</div>
+    <div class="tip">End with a confident pause. Do not say "that's all" or "I think that's it" — end on the word "questions."</div>
   </div>
 </div>
 
@@ -488,21 +519,20 @@
       it just almost never sees English-style hate signals in Urdu text.
     </div>
 
-    <div class="cue cue-note">If asked why larger model is better at zero-shot Urdu</div>
+    <div class="cue cue-note">If asked why the larger model is better at zero-shot Urdu</div>
     <div class="script">
-      XLM-R-large has better Urdu representations because of larger vocabulary
-      (250K vs 119K), more web training data, and temperature-based language sampling.
+      XLM-R-large has better Urdu representations: larger vocabulary (250K vs 119K for mBERT),
+      more web training data, and temperature-based language sampling.
       The capacity ranking on English is preserved on zero-shot Urdu.
-      This is not negative transfer — it is a case where better language coverage
-      beats stronger source-domain calibration.
+      This is not negative transfer — better language coverage beats stronger source-domain calibration.
     </div>
 
-    <div class="cue cue-note">If asked why no collapse in few-shot</div>
+    <div class="cue cue-note">If asked why no few-shot collapse</div>
     <div class="script">
-      Two reasons: we use class weights [1.0, 2.5] calibrated for the Urdu 40% hate rate
-      — not the English [1.0, 8.0] which would massively over-weight hate on balanced data.
+      Two reasons: class weights [1.0, 2.5] calibrated for the Urdu 40% hate rate —
+      not English [1.0, 8.0] which would massively over-weight hate on balanced data.
       And Nastaliq Urdu is in XLM-R's pre-training, so the model already has
-      meaningful Urdu representations that give real gradient signals from step one.
+      meaningful Urdu representations that provide real gradient signals from step one.
     </div>
 
     <div class="cue cue-note">If asked why FuzzyWuzzy did nothing</div>
@@ -510,37 +540,37 @@
       FuzzyWuzzy matches tweet text against a Latin-script lexicon.
       ISE-Hate is Nastaliq Arabic script. String matching across scripts
       produces near-zero similarity for every tweet — the features are pure noise.
-      This would work on Roman Urdu, where the lexicon and text share Latin characters.
+      This would work on Roman Urdu, where lexicon and text share Latin characters.
     </div>
 
     <div class="cue cue-note">If asked why Macro F1 and not accuracy</div>
     <div class="script">
       A model that predicts everything as non-hate gets 60% accuracy on ISE-Hate
       and catches zero hate speech. Macro F1 averages F1 across both classes —
-      failing either class hurts the score equally.
+      failing either class hurts equally.
     </div>
 
-    <div class="cue cue-note">If asked about the supervised vs TF-IDF trade-off</div>
+    <div class="cue cue-note">If asked about supervised vs TF-IDF trade-off</div>
     <div class="script">
-      Supervised XLM-R-large: hate F1 = 0.796, FPR = 0.228.
-      TF-IDF+LR: hate F1 = 0.747, FPR = 0.154.
+      Supervised XLM-R-large: hate F1 equals 0.796, FPR equals 0.228.
+      TF-IDF plus LR: hate F1 equals 0.747, FPR equals 0.154.
       The neural model gains 0.049 hate F1 but produces 48% more false positives.
       For a deployment where over-censoring is the bigger concern, TF-IDF is the better choice.
-      For maximising hate recall, the neural model is better.
     </div>
 
-    <div class="cue cue-note">If asked about the fairness finding</div>
+    <div class="cue cue-note">If asked about the 20× fairness disparity</div>
     <div class="script">
       At zero-shot, Interfaith recall is 28.2% while Other hate recall is 1.4% —
-      a 20x disparity. The English training data biased the model toward hate patterns
+      a twenty-times gap. The English training data biased the model toward hate patterns
       it has seen before: religious-adjacent hate with English surface forms.
-      Native-Urdu-idiom hate speech is completely invisible to the zero-shot model.
+      Native-Urdu-idiom hate speech in the "Other" category is completely invisible
+      to the zero-shot model.
     </div>
 
     <div class="cue cue-note">If asked what you would do differently</div>
     <div class="script">
-      Three things: build a Nastaliq-script hate lexicon so string-matching features
-      actually work; extend few-shot to larger K values to find when neural catches TF-IDF;
+      Three things: build a Nastaliq-script hate lexicon so string-matching features work;
+      extend few-shot to larger K values to find the point where neural catches TF-IDF;
       and investigate adapter-based fine-tuning for more stable adaptation at small K.
     </div>
   </div>
@@ -550,7 +580,7 @@
 <p style="text-align:center; color:#888; font-size:.82rem">
   AI-600 Deep Learning &nbsp;·&nbsp; LUMS Spring 2026 &nbsp;·&nbsp;
   Muteeullah Baig &amp; Rana Muhammad Hamza<br>
-  Presenter Script — print one copy per presenter · highlight your slides<br>
+  Presenter Script — aligned with Presentation v4 (6 slides) &nbsp;·&nbsp; print one copy per presenter<br>
   GitHub: github.com/MuteeullahBaig/AI600-HateSpeech-CrossLingual
 </p>
 
