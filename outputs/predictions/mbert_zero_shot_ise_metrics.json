@@ -1,0 +1,13 @@
+{
+  "f1_hate": 0.013753581661891117,
+  "f1_non_hate": 0.7526943526368731,
+  "f1_macro": 0.3832239671493821,
+  "f1_weighted": 0.4589518127042631,
+  "accuracy": 0.6045496323529411,
+  "precision_hate": 0.8,
+  "recall_hate": 0.006936416184971098,
+  "fpr": 0.0011441647597254005,
+  "checkpoint": "outputs/checkpoints/mbert_en/best_model",
+  "test_file": "data/processed/ise_test.tsv",
+  "lang": "ise"
+}

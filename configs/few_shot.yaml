@@ -5,7 +5,7 @@ model_name: xlm-roberta-large   # override with --model_name_or_path to load che
 max_length: 128
 
 per_device_train_batch_size: 8
-per_device_eval_batch_size: 16
+per_device_eval_batch_size: 32
 gradient_accumulation_steps: 1
 learning_rate: 2.0e-5            # higher LR needed for few-shot adaptation to Urdu
 num_train_epochs: 5              # 5 epochs sufficient — model converges or fails within 2-3 epochs
@@ -15,7 +15,7 @@ weight_decay: 0.01
 fp16: true
 gradient_checkpointing: false    # disabled for small K; saves time, no VRAM issue
 
-class_weights: [1.0, 1.0]       # balanced — Urdu data is 53.5% hate, no upweighting needed
+class_weights: [1.0, 2.5]       # ISE-Hate: 60% non-hate / 40% hate — upweight hate class
 
 eval_strategy: epoch
 save_strategy: epoch
@@ -26,7 +26,7 @@ save_total_limit: 1
 report_to: none
 
 # Few-shot specific
-shot_counts: [8, 16, 32, 64]
+shot_counts: [16, 32, 64]
 num_seeds: 3                     # repeat each K-shot with 3 seeds, report mean±std
 
 seed: 42

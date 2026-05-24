@@ -1,0 +1,13 @@
+{
+  "f1_hate": 0.14732379438261792,
+  "f1_non_hate": 0.7639724218864603,
+  "f1_macro": 0.4556481081345391,
+  "f1_weighted": 0.5188432570009714,
+  "accuracy": 0.6302849264705882,
+  "precision_hate": 0.8853503184713376,
+  "recall_hate": 0.08034682080924856,
+  "fpr": 0.006864988558352402,
+  "checkpoint": "outputs/checkpoints/xlmr_large_en/best_model",
+  "test_file": "data/processed/ise_test.tsv",
+  "lang": "ise"
+}

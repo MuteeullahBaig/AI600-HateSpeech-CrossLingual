@@ -72,6 +72,7 @@ def load_few_shot_split(json_path: str):
 def run_few_shot(
     checkpoint: str,
     few_shot_path: str,
+    dev_dataset,
     test_dataset,
     test_texts: list[str],
     test_labels: list[int],
@@ -79,7 +80,7 @@ def run_few_shot(
     output_dir: str,
     tag: str,
 ) -> dict:
-    """Fine-tune on K-shot data and evaluate on test set. Returns metrics dict."""
+    """Fine-tune on K-shot data, select best checkpoint on dev set, evaluate on test set."""
     set_seed(cfg.get('seed', 42))
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     model     = AutoModelForSequenceClassification.from_pretrained(checkpoint, num_labels=2)
@@ -92,15 +93,21 @@ def run_few_shot(
 
     train_tok = tokenize(few_shot_path, tokenizer, max_length)
     train_tok = train_tok.rename_column('label', 'labels')
-    test_tok  = tokenize(test_dataset,  tokenizer, max_length)
-    test_tok  = test_tok.rename_column('label', 'labels')
+
+    # Dev set: used for checkpoint selection during training (NOT the test set)
+    dev_tok = tokenize(dev_dataset, tokenizer, max_length)
+    dev_tok = dev_tok.rename_column('label', 'labels')
+
+    # Test set: tokenised separately, only used for final predict
+    test_tok = tokenize(test_dataset, tokenizer, max_length)
+    test_tok = test_tok.rename_column('label', 'labels')
 
     os.makedirs(output_dir, exist_ok=True)
     training_args = TrainingArguments(
         output_dir=output_dir,
-        num_train_epochs=cfg.get('num_train_epochs', 20),
+        num_train_epochs=cfg.get('num_train_epochs', 5),
         per_device_train_batch_size=cfg.get('per_device_train_batch_size', 8),
-        per_device_eval_batch_size=cfg.get('per_device_eval_batch_size', 16),
+        per_device_eval_batch_size=cfg.get('per_device_eval_batch_size', 32),
         gradient_accumulation_steps=cfg.get('gradient_accumulation_steps', 1),
         learning_rate=float(cfg.get('learning_rate', 5e-6)),
         warmup_ratio=cfg.get('warmup_ratio', 0.1),
@@ -112,6 +119,7 @@ def run_few_shot(
         metric_for_best_model='f1_hate',
         greater_is_better=True,
         save_total_limit=1,
+        save_only_model=True,          # skip optimizer state — saves ~4GB per checkpoint
         report_to='none',
         logging_steps=10,
         dataloader_num_workers=0,
@@ -123,15 +131,16 @@ def run_few_shot(
         model=model,
         args=training_args,
         train_dataset=train_tok,
-        eval_dataset=test_tok,
+        eval_dataset=dev_tok,          # dev set for checkpoint selection
         processing_class=tokenizer,
         compute_metrics=compute_metrics,
     )
     trainer.train()
 
-    preds_out   = trainer.predict(test_tok)
-    logits      = preds_out.predictions
-    preds       = np.argmax(logits, axis=-1)
+    # Final evaluation on test set — only happens once, after best model is loaded
+    preds_out = trainer.predict(test_tok)
+    logits    = preds_out.predictions
+    preds     = np.argmax(logits, axis=-1)
 
     metrics = full_evaluation(test_labels, preds, logits, verbose=False)
 
@@ -144,9 +153,12 @@ def run_few_shot(
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument('--checkpoint', required=True)
-    p.add_argument('--ur_test',    required=True)
+    p.add_argument('--ur_test',    required=True,  help='Test set TSV — evaluated ONCE at the end')
+    p.add_argument('--dev_file',   required=True,  help='Dev set TSV — used for checkpoint selection during training')
     p.add_argument('--shot_dir',   default='data/processed/few_shot_samples')
     p.add_argument('--config',     default='configs/few_shot.yaml')
+    p.add_argument('--lang',       default='ur',
+                   help='Language prefix for few-shot split files (default: ur, use ise for ISE-Hate)')
     return p.parse_args()
 
 
@@ -158,7 +170,11 @@ def main():
     shot_counts = cfg.get('shot_counts', [8, 16, 32, 64])
     num_seeds   = cfg.get('num_seeds', 3)
 
-    # Load Urdu test set once (reused across all experiments)
+    # Load dev set — used as eval_dataset DURING training for checkpoint selection
+    dev_df      = load_hateval_tsv(args.dev_file)
+    dev_ds      = df_to_hf_dataset(dev_df)
+
+    # Load test set — evaluated ONCE at the end, never touched during training
     test_df     = load_hateval_tsv(args.ur_test)
     test_ds     = df_to_hf_dataset(test_df)
     test_texts  = test_df['text'].tolist()
@@ -169,13 +185,13 @@ def main():
     for k in shot_counts:
         seed_metrics = []
         for seed in range(num_seeds):
-            split_path = os.path.join(args.shot_dir, f'ur_{k}shot_seed{seed}.json')
+            split_path = os.path.join(args.shot_dir, f'{args.lang}_{k}shot_seed{seed}.json')
             if not os.path.exists(split_path):
                 logger.warning(f"Few-shot split not found: {split_path} — run preprocess.py first")
                 continue
 
-            tag        = f'fewshot_ur_{k}shot_seed{seed}'
-            output_dir = f'outputs/checkpoints/fewshot_ur_{k}shot_seed{seed}'
+            tag        = f'fewshot_{args.lang}_{k}shot_seed{seed}'
+            output_dir = f'outputs/checkpoints/fewshot_{args.lang}_{k}shot_seed{seed}'
 
             logger.info(f"K={k}, seed={seed} — {split_path}")
             train_ds = load_few_shot_split(split_path)
@@ -183,6 +199,7 @@ def main():
             m = run_few_shot(
                 checkpoint=args.checkpoint,
                 few_shot_path=train_ds,
+                dev_dataset=dev_ds,
                 test_dataset=test_ds,
                 test_texts=test_texts,
                 test_labels=test_labels,

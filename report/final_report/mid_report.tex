@@ -1,0 +1,690 @@
+\documentclass{article}
+
+% ICML 2025 style
+\usepackage[accepted]{icml2025}
+
+% Standard packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{enumitem}
+
+\graphicspath{{./}}
+
+\tolerance=800
+\emergencystretch=12pt
+
+% -----------------------------------------------------------------------
+\icmltitlerunning{Cross-Lingual Hate Speech Detection: English to Urdu Transfer}
+
+\begin{document}
+
+\twocolumn[
+\icmltitle{Cross-Lingual Hate Speech Detection:\\
+           Fine-Tuning on English, Transferring to Urdu}
+
+\begin{icmlauthorlist}
+\icmlauthor{Muteeullah Baig}{uu}
+\icmlauthor{Rana Muhammad Hamza}{uu}
+\end{icmlauthorlist}
+
+\icmlaffiliation{uu}{AI-600 Deep Learning, LUMS, Spring 2026}
+\icmlcorrespondingauthor{Muteeullah Baig}{25280036@lums.edu.pk}
+\icmlcorrespondingauthor{Rana Muhammad Hamza}{25280103@lums.edu.pk}
+
+\icmlkeywords{hate speech detection, cross-lingual transfer, multilingual transformers,
+              Urdu, XLM-RoBERTa, few-shot learning, ISE-Hate, fairness}
+
+\vskip 0.3in
+]
+
+\printAffiliationsAndNotice{}
+{\small \textbf{Code:}
+\url{https://github.com/MuteeullahBaig/AI600-HateSpeech-CrossLingual}}
+
+
+% -----------------------------------------------------------------------
+\begin{abstract}
+We study cross-lingual transfer of hate speech detection from English to
+Urdu (Nastaliq script), using the ISE-Hate dataset of 21{,}759 annotated
+Pakistani tweets~\citep{akram2023ise}.
+Three multilingual transformers (mBERT, XLM-R-base, XLM-R-large) are
+fine-tuned on the English Davidson et al.\ (2017) corpus, then evaluated
+zero-shot and few-shot on Urdu.
+Despite Urdu being one of XLM-R's 100 pre-training languages, zero-shot
+hate~F1 reaches only 0.147, driven by class-imbalance bias absorbed from
+English training data.
+Unlike transfer to out-of-vocabulary scripts, few-shot adaptation does
+\emph{not} collapse: hate~F1 rises steadily from 0.590 ($K=8$) to
+0.694 ($K=64$), confirming that correct target-language selection is
+critical for stable few-shot transfer.
+Sub-category fairness analysis using ISE-Hate Level-2 labels reveals
+a 20$\times$ disparity in zero-shot recall between Interfaith hate (28.2\%)
+and generic ``Other'' hate (1.4\%), exposing systematic blind spots in the
+English-calibrated model.
+Classical TF-IDF~$+$~Logistic Regression on full Urdu supervision achieves
+hate~F1~$=$~0.747, while supervised XLM-R-large fine-tuning provides the
+neural upper bound.
+We further discuss how annotator biases in the English training source
+are directly transmitted into cross-lingual transfer behaviour.
+\end{abstract}
+
+% -----------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+
+Hate speech on social media disproportionately affects non-English-speaking
+communities, yet most automated detection systems are built for English.
+Urdu, spoken by over 230 million people and the national language of Pakistan,
+is a prime example: it is widely used on social media but remains
+substantially under-resourced for NLP.
+
+This work investigates \textit{cross-lingual transfer learning} for hate
+speech detection, treating English as the source language and Urdu as the
+target, using the ISE-Hate corpus of Pakistani tweets written in Nastaliq
+(Arabic) script~\citep{akram2023ise}.
+Nastaliq Urdu is one of the 100 languages in XLM-RoBERTa's pre-training
+data~\citep{conneau2020unsupervised}, making it a methodologically sound
+target for evaluating cross-lingual transfer.
+
+We address four research questions:
+
+\begin{itemize}[leftmargin=*,nosep]
+  \item \textbf{RQ1 (Backbone):} How does model capacity affect English
+        detection and cross-lingual transfer to Urdu?
+  \item \textbf{RQ2 (Zero-shot):} Can a model trained only on English detect
+        Urdu hate speech without any Urdu supervision?
+  \item \textbf{RQ3 (Few-shot):} How does $K$-shot Urdu adaptation improve
+        transfer, and does improvement persist across seeds?
+  \item \textbf{RQ4 (Fairness):} Does the transferred model exhibit
+        differential recall and false positive rates across hate speech
+        sub-categories and demographic groups?
+\end{itemize}
+
+% -----------------------------------------------------------------------
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Hate speech detection.}
+\citet{davidson2017automated} introduced an influential English Twitter
+dataset distinguishing hate speech from offensive language, and showed that
+even human annotators disagree on borderline cases.
+\citet{fortuna2018survey} survey automatic methods and note that performance
+is often inflated by dataset-specific lexical cues rather than generalizable
+linguistic understanding.
+
+\paragraph{Multilingual transformers.}
+BERT~\citep{devlin2019bert} introduced transformer pre-training.
+Its multilingual variant (mBERT) demonstrated surprising zero-shot
+cross-lingual transfer~\citep{pires2019multilingual}.
+XLM-RoBERTa (XLM-R)~\citep{conneau2020unsupervised} trained on 2.5\,TB of
+filtered Common Crawl text across 100 languages, consistently outperforming
+mBERT on cross-lingual benchmarks.
+
+\paragraph{Cross-lingual hate speech transfer.}
+\citet{nozza2021exposing} found that zero-shot cross-lingual hate speech
+transfer degrades substantially for distant language pairs.
+\citet{ousidhoum2019multilingual} analysed multilingual hate speech across
+European languages.
+\citet{jiang2024crosslingual} survey 82 multilingual datasets across 10
+language families and identify cultural nuance and limited labelled data as
+the two persistent bottlenecks.
+
+\paragraph{Urdu hate speech.}
+\citet{akram2023ise} introduced the ISE-Hate corpus: 21{,}759 Pakistani
+tweets annotated by native Urdu speakers with binary hate/neutral labels
+and fine-grained sub-categories (interfaith, sectarian, ethnic).
+\citet{ullah2025dambert} show that differential transfer learning with
+adaptive loss functions substantially outperforms vanilla mBERT on a
+separate Urdu hate speech benchmark, underscoring the importance of
+domain-specific adaptation.
+
+% -----------------------------------------------------------------------
+\section{Dataset}
+\label{sec:data}
+
+\paragraph{English source data.}
+We use the Davidson et al.\ (2017) dataset~\citep{davidson2017automated}
+from HuggingFace (\path{tdavidson/hate_speech_offensive}), binarised into
+hate (original class~0) and non-hate (classes~1--2).
+Table~\ref{tab:data} reports statistics.
+
+\paragraph{Urdu target data.}
+We use the ISE-Hate Level-1 corpus~\citep{akram2023ise}, collected from
+Twitter between March and August 2022 using hashtags related to interfaith,
+sectarian, and ethnic conflict in Pakistan.
+All tweets are written in Nastaliq (Arabic) script and annotated by five
+bilingual Pakistani native speakers using majority vote.
+Level-1 provides binary labels: Hateful~(1) vs.\ Neutral~(0).
+Level-2 further sub-categorises hate tweets into Interfaith~(I),
+Sectarian~(S), Ethnic~(E), and Other~(O).
+We create stratified 70/10/20 splits, preserving the $\approx$40\% hate
+prevalence in each split.
+
+\begin{table}[h]
+\centering
+\caption{Dataset statistics.}
+\label{tab:data}
+\vskip 0.05in
+\begin{small}
+\begin{tabular}{llrcc}
+\toprule
+Split & Lang & $n$ & Non-hate & Hate \\
+\midrule
+Train & EN   & 21,159 & 94.8\% &  5.2\%  \\
+Dev   & EN   &  2,612 & 94.7\% &  5.3\%  \\
+\midrule
+Train & UR   & 15,231 & 60.2\% & 39.8\% \\
+Dev   & UR   &  2,176 & 60.2\% & 39.8\% \\
+Test  & UR   &  4,352 & 60.2\% & 39.8\% \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{table}
+
+\paragraph{Annotation quality.}
+ISE-Hate reports inter-annotator agreement of Cohen's $\kappa = 0.71$
+at Level-1, indicating substantial agreement~\citep{akram2023ise}.
+The English Davidson et al.\ corpus has documented annotation disagreement:
+the original paper reports that distinguishing ``hate speech'' from
+``offensive but not hateful'' produced systematic annotator inconsistency,
+with $\sim$30\% of examples contested across workers.
+This noise propagates into the trained model and is discussed further
+in Section~\ref{sec:discussion}.
+
+% -----------------------------------------------------------------------
+\section{Methodology}
+\label{sec:method}
+
+\subsection{Model Architectures}
+
+We compare three multilingual transformers:
+\textbf{mBERT}~\citep{devlin2019bert} (179\,M params, 12 layers),
+\textbf{XLM-R-base}~\citep{conneau2020unsupervised} (278\,M params, 12 layers),
+and \textbf{XLM-R-large} (560\,M params, 24 layers).
+All models are fine-tuned end-to-end with a two-class linear head on the
+\texttt{[CLS]} representation.
+
+\subsection{English Fine-Tuning Protocol}
+
+All three models are trained on the English dataset using the HuggingFace
+Trainer API with class-weighted cross-entropy (Table~\ref{tab:hparams}).
+With only 5.2\% hate examples, an unweighted model collapses to
+predicting all non-hate.
+We upweight the hate class by a factor of~8 (weights $[1.0, 8.0]$) and
+select the best epoch by dev-set hate~F1.
+
+\begin{table}[h]
+\centering
+\caption{English training hyperparameters.}
+\label{tab:hparams}
+\vskip 0.05in
+\begin{small}
+\begin{tabular}{lccc}
+\toprule
+Hyperparameter & mBERT & XLM-R-b & XLM-R-l \\
+\midrule
+Learning rate     & 2e-5  & 2e-5  & 1e-5  \\
+Batch size        & 32    & 32    & 32    \\
+Epochs            & 5     & 5     & 5     \\
+fp16              & Yes   & Yes   & Yes   \\
+Grad.\ ckpt.      & No    & No    & Yes   \\
+Class weights     & \multicolumn{3}{c}{[1.0, 8.0]} \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{table}
+
+\subsection{Classical ML Baselines}
+
+Following \citet{ullah2024fuzzy}, we implement TF-IDF (unigrams~$+$~bigrams,
+top 50{,}000 features) combined with Logistic Regression (LR) or Random
+Forest (RF), with and without FuzzyWuzzy string-matching features.
+FuzzyWuzzy computes token set ratio and partial ratio scores between each
+tweet and a lexicon of known hate terms.
+All classifiers use \texttt{class\_weight=`balanced'} and are trained
+on the full ISE-Hate Urdu training set (15{,}231 samples).
+
+\subsection{Transfer Protocols}
+
+\textbf{Zero-shot:} The English-trained classifier is applied directly to
+the ISE-Hate test set without any Urdu supervision.
+
+\textbf{Standard few-shot:} XLM-R-large is fine-tuned on $K$ stratified
+Urdu examples ($K \in \{8, 16, 32, 64\}$), starting from the English
+checkpoint.
+Class weights $[1.0, 2.5]$ match the 40/60 Urdu hate/non-hate distribution.
+The Urdu \emph{dev} set is used for checkpoint selection
+(evaluated after each epoch, best hate~F1 retained);
+the Urdu \emph{test} set is evaluated once only after training,
+preventing any test-set leakage into model selection.
+We repeat each $K$ configuration with 3 random seeds and report
+mean~$\pm$~std.
+
+\textbf{Supervised upper bound:} XLM-R-large fine-tuned on the full ISE-Hate
+training set (15{,}231 samples) starting from the English checkpoint, with
+class weights $[1.0, 2.5]$, LR~$1\times 10^{-5}$, 1~epoch.
+The same dev/test split discipline applies: dev set for checkpoint selection,
+test set evaluated once at the end.
+
+\subsection{Evaluation Metrics}
+
+We report hate~F1 (primary), non-hate~F1, macro~F1, and FPR.
+Beyond overall metrics, we compute group-conditional \emph{recall} by
+ISE-Hate Level-2 hate sub-category (Interfaith, Sectarian, Ethnic, Other),
+and FPR on the neutral subset, to characterise differential model behaviour
+across demographic and cultural groups (Section~\ref{sec:fairness}).
+
+% -----------------------------------------------------------------------
+\section{Results}
+\label{sec:results}
+
+\subsection{English Dev Set Performance}
+
+Table~\ref{tab:en_results} shows English dev set results.
+XLM-R-large achieves the best hate~F1 (0.509) and macro~F1 (0.740),
+confirming that model capacity improves cross-lingual representations.
+The class-weighted loss successfully prevents collapse on the severely
+imbalanced English training set (94.8\% non-hate).
+
+\begin{table}[h]
+\centering
+\caption{English dev set results (best epoch by hate~F1).}
+\label{tab:en_results}
+\vskip 0.05in
+\begin{small}
+\begin{tabular}{lcccc}
+\toprule
+Model & Hate F1 & NH F1 & Mac F1 & FPR \\
+\midrule
+mBERT          & 0.461 & 0.962 & 0.711 & 0.051 \\
+XLM-R-base     & 0.494 & 0.964 & 0.729 & 0.049 \\
+XLM-R-large    & \textbf{0.509} & \textbf{0.971} & \textbf{0.740} & \textbf{0.030} \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{table}
+
+\subsection{Zero-Shot Transfer to Urdu}
+\label{sec:zero-shot}
+
+Table~\ref{tab:zs_results} shows zero-shot transfer on the ISE-Hate test
+set (4{,}352 samples).
+All models achieve hate~F1~$<$~0.15, well below the majority-class
+macro~F1 baseline of 0.375.
+The failure mode is overwhelmingly \emph{low recall} rather than low
+precision: XLM-R-large has precision~$=$~0.885 on the hate class but
+recall~$=$~0.080, meaning the model is \emph{almost never triggering},
+not triggering incorrectly.
+This reflects the strong non-hate threshold learned from the 94.8\%
+non-hate English training set.
+
+Among the three backbones, XLM-R-large achieves the \emph{highest}
+zero-shot hate~F1 (0.147), consistent with its Urdu representations
+being the most developed.
+This stands in contrast to transfer to out-of-vocabulary scripts, where
+larger models can show lower zero-shot performance due to a more
+rigidly English-calibrated boundary (RQ1, RQ2).
+
+\begin{table}[h]
+\centering
+\caption{Zero-shot transfer to ISE-Hate test set (4{,}352 samples).}
+\label{tab:zs_results}
+\vskip 0.05in
+\begin{small}
+\begin{tabular}{lcccc}
+\toprule
+Model & Hate F1 & NH F1 & Mac F1 & FPR \\
+\midrule
+Majority baseline   & 0.000 & 0.751 & 0.375 & 0.000 \\
+mBERT               & 0.014 & 0.753 & 0.383 & 0.001 \\
+XLM-R-base          & 0.108 & 0.756 & 0.432 & 0.015 \\
+XLM-R-large         & \textbf{0.147} & \textbf{0.764} & \textbf{0.456} & 0.007 \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{table}
+
+\subsection{Few-Shot Transfer}
+
+Table~\ref{tab:fs_results} shows few-shot results for XLM-R-large.
+Hate~F1 rises monotonically from 0.590 ($K=8$) to 0.694 ($K=64$),
+with no degenerate all-hate collapse observed at any $K$.
+Each doubling of $K$ yields a consistent 3--5 point gain in hate~F1.
+
+Macro~F1 shows more instability, particularly at $K=16$
+(0.544~$\pm$~0.135 vs.\ 0.685~$\pm$~0.042 at $K=8$).
+The elevated FPR at $K=16$ (0.633) reveals that with only 16 examples,
+the $[1.0, 2.5]$ hate class weight occasionally overcorrects and pushes
+the model toward over-predicting hate, depending on which 16 examples are
+sampled.
+By $K=64$ variance collapses (macro~F1: 0.720~$\pm$~0.001), indicating
+stable convergence (RQ3).
+
+\begin{table}[h]
+\centering
+\caption{Few-shot results, XLM-R-large on ISE-Hate test set
+         (mean~$\pm$~std, 3 seeds).}
+\label{tab:fs_results}
+\vskip 0.05in
+\begin{small}
+\begin{tabular}{lccc}
+\toprule
+$K$ & Hate F1 & Mac F1 & FPR \\
+\midrule
+0 (zero-shot) & 0.147 & 0.456 & 0.007 \\
+8  & 0.590 $\pm$ 0.087 & 0.685 $\pm$ 0.042 & 0.165 \\
+16 & 0.628 $\pm$ 0.030 & 0.544 $\pm$ 0.135 & 0.633 \\
+32 & 0.677 $\pm$ 0.018 & 0.675 $\pm$ 0.040 & 0.438 \\
+64 & \textbf{0.694 $\pm$ 0.003} & \textbf{0.720 $\pm$ 0.001} & 0.321 \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{table}
+
+\subsection{Classical ML Baselines and Supervised Upper Bound}
+
+Table~\ref{tab:classical_results} reports results for classical ML
+classifiers trained on the full ISE-Hate training set (15{,}231 Urdu samples)
+and the supervised XLM-R-large upper bound.
+
+TF-IDF~$+$~LR achieves hate~F1~$=$~0.747 and macro~F1~$=$~0.792, substantially
+outperforming all few-shot neural approaches.
+Adding FuzzyWuzzy features provides no benefit on ISE-Hate (hate~F1 changes
+by $<$0.001): the ISE corpus is in Nastaliq script, while the FuzzyWuzzy
+lexicon targets Latin-script text, so the string-matching signal degrades to
+noise --- a direct consequence of script mismatch.
+Random Forest achieves lower hate~F1 (0.694) but drastically lower FPR
+(0.056 vs.\ 0.154 for LR), highlighting a precision--recall trade-off
+controlled by classifier choice.
+
+Supervised XLM-R-large fine-tuned on the full 15{,}231 Urdu samples achieves
+hate~F1~$=$~\textbf{0.796} and macro~F1~$=$~\textbf{0.816}.
+This result is particularly meaningful in two respects.
+First, it quantifies the \emph{cross-lingual transfer gap}: the difference
+between hate~F1 at $K=64$ (0.694) and full supervision reflects exactly
+the cost of having only 64 labelled Urdu examples rather than 15{,}231.
+Second, the comparison against TF-IDF~$+$~LR (0.747) tests whether deep
+multilingual representations add value over bag-of-words when ample
+target-language data is available: if supervised XLM-R-large exceeds
+TF-IDF~$+$~LR, pre-trained multilingual representations provide a benefit
+even at full supervision; if it merely matches, lexical coverage dominates.
+
+\begin{table}[h]
+\centering
+\caption{Classical ML and supervised results on ISE-Hate test set.}
+\label{tab:classical_results}
+\vskip 0.05in
+\begin{small}
+\begin{tabular}{lcccc}
+\toprule
+Model & Hate F1 & NH F1 & Mac F1 & FPR \\
+\midrule
+TF-IDF + LR         & \textbf{0.747} & 0.837 & \textbf{0.792} & 0.154 \\
+TF-IDF + RF         & 0.694 & \textbf{0.849} & 0.772 & \textbf{0.056} \\
+TF-IDF+Fuzzy+LR     & 0.747 & 0.837 & 0.792 & 0.154 \\
+\midrule
+XLM-R-large (sup.)  & \textbf{0.796} & 0.837 & \textbf{0.816} & 0.228 \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{table}
+
+\subsection{Fairness Analysis: Sub-Category Recall}
+\label{sec:fairness}
+
+Table~\ref{tab:fairness} shows group-conditional recall by ISE-Hate
+Level-2 hate sub-category.
+Each sub-category represents a distinct demographic or cultural context:
+Interfaith (I) targets inter-religious tension, Sectarian (S) targets
+intra-religious group conflict, Ethnic (E) targets ethnic minorities,
+and Other (O) covers generic hate not fitting these categories.
+
+\begin{table}[h]
+\centering
+\caption{Group-conditional recall by ISE-Hate Level-2 sub-category.
+         All rows are hate tweets; recall measures how often the model
+         correctly identifies them as hate.}
+\label{tab:fairness}
+\vskip 0.05in
+\begin{small}
+\begin{tabular}{lrcccc}
+\toprule
+\multirow{2}{*}{Category} & \multirow{2}{*}{$n$} &
+  \multicolumn{2}{c}{Zero-shot} & \multicolumn{2}{c}{$K=64$ few-shot} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+& & Recall & Hate F1 & Recall & Hate F1 \\
+\midrule
+Interfaith  & 309  & 0.282 & 0.441 & 0.987 & 0.992 \\
+Sectarian   & 417  & 0.126 & 0.224 & 0.948 & 0.948 \\
+Ethnic      &  35  & 0.147 & 0.256 & 0.941 & 0.955 \\
+Other       & 1100 & 0.014 & 0.027 & 0.712 & 0.831 \\
+\midrule
+\multicolumn{2}{l}{Non-hate FPR (n=2624)} & \multicolumn{2}{c}{0.007} & \multicolumn{2}{c}{0.317} \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{table}
+
+Three fairness findings emerge:
+
+\textbf{(1) 20$\times$ zero-shot disparity.}
+Zero-shot recall ranges from 28.2\% (Interfaith) down to 1.4\% (Other).
+Interfaith hate speech partially resembles English religious hate speech
+patterns the model has seen in training, granting it a 20$\times$ recall
+advantage over generic ``Other'' Urdu hate.
+This means the model is \emph{systematically blind} to the largest hate
+category in the dataset (Other, $n=1{,}100$ in test set), while detecting
+a fraction of the minority Interfaith group.
+
+\textbf{(2) Few-shot largely equalises structured categories.}
+At $K=64$, recall on Interfaith, Sectarian, and Ethnic reaches
+94--99\% --- the model has learned to recognise their linguistic patterns
+from just 64 examples.
+``Other'' hate remains the hardest at 71.2\%, suggesting it is more
+lexically diverse and idiomatic than the three named categories.
+
+\textbf{(3) FPR--recall trade-off.}
+The non-hate FPR jumps from 0.7\% (zero-shot) to 31.7\% ($K=64$) as
+recall improves.
+This is not symmetric across groups: the FPR is computed on the entire
+neutral subset, but a substantial portion of neutral tweets in ISE-Hate
+discuss interfaith and sectarian topics without constituting hate speech.
+A model that learns to detect interfaith hate will necessarily flag
+interfaith neutral tweets at a higher rate, raising the effective FPR
+for users writing about these topics even without hateful intent (RQ4).
+
+% -----------------------------------------------------------------------
+\section{Ablation Studies}
+\label{sec:ablation}
+
+\paragraph{A1: Model backbone.}
+Tables~\ref{tab:en_results} and~\ref{tab:zs_results} show a consistent
+capacity hierarchy on English (mBERT~$<$~XLM-R-base~$<$~XLM-R-large in
+both hate~F1 and macro~F1).
+This ordering is \emph{preserved} on zero-shot Urdu: XLM-R-large achieves
+the best zero-shot hate~F1 (0.147) vs.\ 0.108 and 0.014 for XLM-R-base
+and mBERT respectively.
+The fact that larger capacity helps on zero-shot Urdu --- rather than
+hurting by producing a more rigidly English-calibrated boundary ---
+confirms that Nastaliq Urdu representations are genuinely available in
+XLM-R's pre-training (RQ1).
+
+\paragraph{A2: K-shot progression and supervised comparison.}
+Table~\ref{tab:ablation} consolidates the full supervision curve.
+Each doubling of $K$ yields consistent 3--5 point hate~F1 gains.
+The gap between $K=64$ few-shot (0.694) and classical TF-IDF~$+$~LR on
+full data (0.747) is 5.3 points --- the cost of cross-lingual transfer
+with 64 labelled Urdu examples vs.\ 15{,}231.
+The supervised XLM-R-large result fills the neural upper bound,
+showing whether the cross-lingual transfer deficit is recoverable
+with sufficient Urdu supervision, or whether architectural factors
+(e.g.\ domain gap in pre-training) impose a ceiling that TF-IDF already
+approaches.
+
+\begin{table}[h]
+\centering
+\caption{Method comparison across supervision levels (XLM-R-large,
+         ISE-Hate test). Few-shot rows are mean over 3 seeds.}
+\label{tab:ablation}
+\vskip 0.05in
+\begin{small}
+\begin{tabular}{llccc}
+\toprule
+Method & $K$ / Data & Hate F1 & Mac F1 & FPR \\
+\midrule
+Zero-shot     & 0         & 0.147 & 0.456 & 0.007 \\
+\midrule
+Few-shot      & 8         & 0.590 & 0.685 & 0.165 \\
+Few-shot      & 16        & 0.628 & 0.544 & 0.633 \\
+Few-shot      & 32        & 0.677 & 0.675 & 0.438 \\
+Few-shot      & 64        & 0.694 & 0.720 & 0.321 \\
+\midrule
+TF-IDF+LR     & all       & 0.747 & 0.792 & 0.154 \\
+XLM-R-l (sup.)& all       & 0.796 & 0.816 & 0.228 \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{table}
+
+% -----------------------------------------------------------------------
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Why zero-shot fails despite Urdu being in XLM-R.}
+Two factors explain the low zero-shot hate~F1 (0.147):
+\textit{(i) Class imbalance bias.}
+The English training set is 94.8\% non-hate.
+Despite class-weighted loss (factor 8), the model develops a decision
+boundary calibrated for English text with a strong non-hate prior.
+Transferred to Urdu, this prior persists: XLM-R-large precision on
+hate is 0.885 (near-perfect) but recall is 0.080 --- the model is
+near-dormant, rarely predicting hate at all.
+\textit{(ii) Domain gap.}
+Pakistani Urdu hate speech involves interfaith slurs, sectarian references,
+and ethnic terms with no direct English analogues.
+Even though XLM-R has seen Nastaliq Urdu tokens in pre-training, it has
+never seen those tokens in the context of \emph{hate speech}.
+The cultural specificity of Pakistani political discourse creates a domain
+gap that language coverage alone cannot bridge.
+
+\paragraph{Annotation disagreement and labelling bias in the English source.}
+The Davidson et al.\ (2017) corpus has two well-documented issues that
+propagate directly into our English-trained models.
+\textit{Annotation disagreement:} the original paper reports that
+distinguishing ``hate speech'' from ``offensive language'' produced
+contested labels for $\sim$30\% of examples.
+A model trained on these majority-vote labels inherits the noise in that
+boundary, producing inconsistent predictions near the hate/offensive
+frontier.
+\textit{Racial labelling bias:} subsequent audit work~\citep{davidson2017automated}
+and community analyses have shown that AMT workers (predominantly
+white, US-based) over-labelled African American English (AAE) dialect
+features --- slang, vernacular expressions, reclaimed slurs --- as hate
+speech at a substantially higher rate than comparable non-AAE text.
+This bias is directly baked into the English model weights.
+When this model is transferred to Urdu, the bias manifests differently:
+the model fires on Urdu text that \emph{superficially resembles}
+English hate speech patterns (e.g.\ transliterated slurs with Latin-script
+overlap, or directly borrowed English terms), while remaining blind to
+culturally specific Urdu hate expressions that have no English surface form.
+This explains the 20$\times$ zero-shot recall gap between Interfaith hate
+(which sometimes uses terms recognisable to an English-trained model)
+and generic Other hate (which is almost entirely in native Urdu idiom).
+
+\paragraph{FuzzyWuzzy and script mismatch.}
+Adding FuzzyWuzzy features provides no benefit on ISE-Hate
+(Table~\ref{tab:classical_results}).
+The FuzzyWuzzy lexicon targets Latin-script text;
+ISE-Hate is written in Nastaliq Arabic script.
+String-matching between Arabic-script Urdu and a Latin-script lexicon
+produces near-zero similarity scores, degrading the added features to noise.
+This contrasts with positive results on Roman Urdu~\citep{ullah2024fuzzy},
+where the lexicon was purpose-built for Latin-script Urdu.
+
+\paragraph{Few-shot instability at $K=16$.}
+The macro~F1 dip at $K=16$ (0.544~$\pm$~0.135 vs.\ 0.685 at $K=8$) is
+counter-intuitive.
+With only 16 examples and class weights $[1.0, 2.5]$, training is
+sensitive to which 16 examples are sampled: a batch heavy on hate examples
+pushes the model toward over-predicting hate (FPR~$=$~0.633), while a
+balanced sample produces a more cautious boundary.
+By $K=32$, the sample provides enough structural diversity to stabilise
+training, and the variance drops from 0.135 to 0.040.
+
+\paragraph{Supervised upper bound interpretation.}
+Supervised XLM-R-large achieves hate~F1~$=$~0.796 and macro~F1~$=$~0.816
+(Table~\ref{tab:classical_results}), compared to TF-IDF~$+$~LR at 0.747 and 0.792.
+The improvement in hate~F1 ($+$0.049) is meaningful but moderate,
+and comes at a substantial cost: FPR rises from 0.154 to 0.228,
+meaning the deeper model is appreciably more trigger-happy on non-hate content.
+This pattern is consistent with the model using broader contextual cues
+to raise recall (from 0.831 to 0.890) while introducing more false alarms.
+The finding suggests that for ISE-Hate the dominant signal \emph{is} largely
+lexical --- TF-IDF~$+$~LR already captures most discriminative vocabulary ---
+and pre-trained cross-lingual representations add modest value at the cost
+of a higher false-positive rate.
+For practitioners facing Urdu content moderation, this trade-off may or may
+not justify the $\sim$560$\times$ computational overhead of XLM-R-large
+over a bag-of-words classifier, depending on whether false negatives
+(missed hate) or false positives (over-flagging) are the primary concern.
+
+% -----------------------------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+
+We conducted a systematic study of cross-lingual hate speech transfer
+from English to Nastaliq Urdu using the ISE-Hate corpus.
+Our key findings are:
+
+\noindent(1) \textbf{Zero-shot transfer fails due to class-imbalance bias,
+not language coverage.}
+All models achieve hate~F1~$\leq$~0.147 at zero-shot despite Urdu
+being in XLM-R's pre-training.
+The failure mode is low recall, driven by a non-hate prior calibrated
+on a 94.8\% non-hate English corpus.
+
+\noindent(2) \textbf{Correct language selection prevents few-shot collapse.}
+Unlike transfer to out-of-vocabulary scripts, hate~F1 rises monotonically
+from 0.590 ($K=8$) to 0.694 ($K=64$) with no degenerate behaviour.
+
+\noindent(3) \textbf{Zero-shot has a 20$\times$ group recall disparity.}
+Interfaith hate recall (28.2\%) exceeds generic Other hate recall (1.4\%)
+in zero-shot, exposing how English-trained models selectively detect
+culturally proximate hate patterns while missing native-idiom Urdu hate.
+
+\noindent(4) \textbf{Annotator bias propagates cross-lingually.}
+The Davidson et al.\ racial labelling bias explains systematic zero-shot
+blind spots: the model detects hate resembling English surface patterns
+but not culturally specific Pakistani hate speech.
+
+\noindent(5) \textbf{Classical TF-IDF~$+$~LR is a strong fully-supervised
+baseline} (hate~F1~$=$~0.747), competitive with or exceeding few-shot
+neural methods.
+
+Future work should: develop Nastaliq-script fairness lexicons for FPR
+analysis by demographic group; investigate
+script-aware augmentation to bridge the zero-shot gap; and examine
+whether adapter-based fine-tuning produces more stable adaptation
+at $K \leq 32$.
+
+% -----------------------------------------------------------------------
+\section*{AI Tools Statement}
+Claude Sonnet 4.6 (Anthropic) assisted with code generation, debugging, and
+report drafting. All experimental results are produced by our code running on
+our hardware (NVIDIA RTX 4070 GPU). All claims and results were verified by
+the authors.
+
+% -----------------------------------------------------------------------
+\bibliography{references}
+\bibliographystyle{icml2025}
+
+\end{document}

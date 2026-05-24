@@ -1,0 +1,13 @@
+{
+  "f1_hate": 0.7959658650116369,
+  "f1_non_hate": 0.8368823651023362,
+  "f1_macro": 0.8164241150569865,
+  "f1_weighted": 0.8206173041747374,
+  "accuracy": 0.8187040441176471,
+  "precision_hate": 0.7201684604585868,
+  "recall_hate": 0.8895953757225433,
+  "fpr": 0.22807017543859648,
+  "checkpoint": "D:\\Deep Learning Project\\outputs\\checkpoints\\xlmr_large_ise_supervised\\best_model",
+  "test_file": "D:\\Deep Learning Project\\data\\processed\\ise_test.tsv",
+  "lang": "ise"
+}

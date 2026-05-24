@@ -117,7 +117,7 @@ def save_predictions(
         })
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
-    print(f"Saved {len(records)} predictions → {output_path}")
+    print(f"Saved {len(records)} predictions -> {output_path}")
     return records
 
 
